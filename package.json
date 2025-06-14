@@ -1,0 +1,32 @@
+{
+  "name": "chess-evaluator",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/tomerbabila/chess-evaluator#readme",
+  "bugs": {
+    "url": "https://github.com/tomerbabila/chess-evaluator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomerbabila/chess-evaluator.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "chess.js": "^1.0.0-beta.6",
+    "express": "^4.18.2",
+    "nodemon": "^3.0.2",
+    "stockfish": "^16.0.0"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/stockfish/src/stockfish.wasm"
+    ]
+  }
+}
