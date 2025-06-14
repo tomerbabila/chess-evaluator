@@ -8,7 +8,6 @@ app.use(bodyParser.json());
 
 app.use('/best-move', bestMoveRoute);
 app.use('/piece-eval', pieceEvalRoute);
-app.use('/', (_, res) => res.status(200).json({ isOk: 'Yes' }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

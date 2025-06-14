@@ -1,9 +1,9 @@
-import { Chess } from 'chess.js';
+import { Chess, validateFen } from 'chess.js';
 
 class ChessService {
   static create(fen) {
     const chess = new Chess(fen);
-    if (!chess.validate_fen(fen).valid) {
+    if (!validateFen(fen).ok) {
       throw new Error('Invalid FEN string');
     }
     return chess;

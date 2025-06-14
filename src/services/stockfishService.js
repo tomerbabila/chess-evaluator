@@ -9,7 +9,7 @@ class StockfishService {
   static instance;
 
   constructor() {
-    const stockfishPath = path.join(__dirname, '../stockfish/stockfish'); // or just 'stockfish' on Linux/Mac
+    const stockfishPath = path.join(__dirname, '../../stockfish/stockfish'); // or just 'stockfish' on Linux/Mac
     this.engine = spawn(stockfishPath);
 
     this.queue = [];
