@@ -28,5 +28,16 @@
     "assets": [
       "node_modules/stockfish/src/stockfish.wasm"
     ]
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "bin": {
+    "chess-evaluator-server": "index.js"
+  },
+  "keywords": [
+    "stockfish",
+    "nodejs",
+    "server"
+  ]
 }

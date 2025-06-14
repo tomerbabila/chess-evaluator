@@ -1,28 +1,24 @@
-# Base image with Node.js
-FROM node:20-alpine
+# Use Node official image with Debian base (compatible with Ubuntu)
+FROM node:20-slim
 
-# Install dependencies needed to run Stockfish
-RUN apk add --no-cache curl
+# Set working directory inside container
+WORKDIR /usr/src/app
 
-# Set working directory
-WORKDIR /app
-
-# Copy dependencies
+# Copy package files and install dependencies first for caching
 COPY package*.json ./
 RUN npm install
 
-# Copy app source
+# Copy all project files into container
 COPY . .
 
-# Download Stockfish binary into engine folder
-RUN mkdir -p ./engine && \
-    curl -L https://stockfishchess.org/files/stockfish-ubuntu-x86-64-avx2.zip -o /tmp/sf.zip && \
-    unzip /tmp/sf.zip -d /tmp/sf && \
-    mv /tmp/sf/stockfish* ./engine/stockfish && \
-    chmod +x ./engine/stockfish
+# Make sure Stockfish binary is executable
+RUN chmod +x ./stockfish/stockfish
 
-# Expose port
+# Install nodemon globally for hot reload in dev
+RUN npm install -g nodemon
+
+# Expose the port your Express app listens on
 EXPOSE 3000
 
-# Start app
+# Run nodemon to watch for changes in the 'src' folder and restart server automatically
 CMD ["npm", "start"]

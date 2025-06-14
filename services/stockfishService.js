@@ -1,28 +1,37 @@
-import pkg from 'stockfish';
-const Stockfish = pkg.default || pkg;
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class StockfishService {
   static instance;
 
   constructor() {
-    this.engine = Stockfish();
-    this.ready = false;
+    const stockfishPath = path.join(__dirname, '../stockfish/stockfish'); // or just 'stockfish' on Linux/Mac
+    this.engine = spawn(stockfishPath);
+
     this.queue = [];
     this.buffer = '';
 
-    this.engine.onmessage = (line) => {
-      this.buffer += line + '\n';
+    // Listen to stdout data, not onmessage (that's for Web Workers)
+    this.engine.stdout.on('data', (data) => {
+      const lines = data.toString().split('\n').filter(Boolean);
 
-      if (/readyok|bestmove/.test(line)) {
-        const callback = this.queue.shift();
-        if (callback) callback(this.buffer);
-        this.buffer = '';
-      }
-    };
+      lines.forEach((line) => {
+        this.buffer += line + '\n';
 
-    this.engine.postMessage('uci');
-    this.engine.postMessage('isready');
-    this.ready = true;
+        if (/readyok|bestmove/.test(line)) {
+          const callback = this.queue.shift();
+          if (callback) callback(this.buffer);
+          this.buffer = '';
+        }
+      });
+    });
+
+    this.engine.stdin.write('uci\n');
+    this.engine.stdin.write('isready\n');
   }
 
   static getInstance() {
@@ -34,7 +43,7 @@ class StockfishService {
 
   send(commands) {
     return new Promise((resolve) => {
-      commands.forEach((cmd) => this.engine.postMessage(cmd));
+      commands.forEach((cmd) => this.engine.stdin.write(cmd + '\n'));
       this.queue.push(resolve);
     });
   }
@@ -57,7 +66,7 @@ class StockfishService {
     const match = line?.match(/score (cp|mate) (-?\d+)/);
 
     if (!match) return null;
-    return match[1] === 'cp' ? parseInt(match[2]) : match[2] > 0 ? 10000 : -10000;
+    return match[1] === 'cp' ? parseInt(match[2]) : match[2] > 0 ? 10000 : -100;
   }
 }
 
