@@ -9,6 +9,7 @@ export async function evaluatePieceMoves(fen, pieceCode) {
   const pieceMoves = legalMoves.filter((move) => move.from === pieceCode.toLowerCase());
 
   const scores = {};
+
   for (const move of pieceMoves) {
     chess.move(move); // make move
     const newFen = chess.fen();
@@ -16,7 +17,6 @@ export async function evaluatePieceMoves(fen, pieceCode) {
 
     const moveStr = move.from + move.to;
     const score = await stockfish.evaluatePosition(newFen); // evaluate new position
-    console.log(score);
 
     scores[moveStr] = score;
   }
